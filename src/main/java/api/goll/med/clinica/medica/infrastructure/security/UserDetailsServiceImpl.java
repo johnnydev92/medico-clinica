@@ -23,8 +23,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String crm) throws UsernameNotFoundException {
         // Busca o usuário no banco de dados pelo e-mail
-        MedicosEntity medicos = medicosRepository.findByCRM(crm)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + crm));
+        MedicosEntity medicos = medicosRepository.findByCrm(crm)
+                .orElseThrow(() -> new UsernameNotFoundException("Médico não encontrado: " + crm));
 
         // Cria e retorna um objeto UserDetails com base no usuário encontrado
         return org.springframework.security.core.userdetails.User

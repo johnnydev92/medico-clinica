@@ -1,5 +1,6 @@
 package api.goll.med.clinica.medica.infrastructure.security;
 
+
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +48,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/", "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario/login").permitAll()
-                        .requestMatchers("/usuario/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/medico").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/medico/update").permitAll()
+                        .requestMatchers("/medico/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -58,12 +59,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    // Configura o PasswordEncoder para criptografar senhas usando BCrypt
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Retorna uma instância de BCryptPasswordEncoder
     }
 
     // Configura o AuthenticationManager usando AuthenticationConfiguration
