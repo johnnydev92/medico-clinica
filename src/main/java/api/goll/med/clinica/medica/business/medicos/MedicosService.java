@@ -6,6 +6,7 @@ import api.goll.med.clinica.medica.business.dtos.MedicoResponseDTO;
 import api.goll.med.clinica.medica.infrastructure.entities.MedicosEntity;
 import api.goll.med.clinica.medica.infrastructure.exceptions.ConflictException;
 import api.goll.med.clinica.medica.infrastructure.exceptions.ResourceNotFoundException;
+import api.goll.med.clinica.medica.infrastructure.exceptions.UnathorizedException;
 import api.goll.med.clinica.medica.infrastructure.repository.MedicosRepository;
 import api.goll.med.clinica.medica.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,20 @@ public class MedicosService {
 
         public void deletaCadastroComToken(String token){
             String crm = jwtUtil.extrairCrmToken(token.substring(7));
+            try {
+                boolean tokenValido = jwtUtil.validateToken(token, crm);
+
+                if (!tokenValido){
+                    throw new UnathorizedException("Token inválido");
+                }
+            }catch (UnathorizedException e){
+                throw new UnathorizedException("Token inválido");
+            }
+
             MedicosEntity medicos = medicosRepository.findByCrm(crm)
-                    .orElseThrow(() -> new ResourceNotFoundException("Médico não encontrado com o CRM: " + crm));
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Médico não encontrado com o CRM: " + crm));
+
             medicosRepository.deleteByCrm(crm);
         }
 
