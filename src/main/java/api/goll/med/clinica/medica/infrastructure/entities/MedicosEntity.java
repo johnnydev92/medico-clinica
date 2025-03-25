@@ -31,12 +31,11 @@ public class MedicosEntity {
     @Column(name = "senha", updatable = true)
     private String senha;
     @JsonProperty(required = true)
-    @Column(name = "crm", updatable = true)
+    @Column(name = "crm", updatable = true, unique = true)
     private String crm;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id")
-    private List<EnderecoEntity> endereco;
+
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "especialidade", updatable = true)

@@ -44,7 +44,7 @@ JwtUtil {
 
 
     // Extrai o email do usuário do token JWT
-    public String extrairEmailToken(String token) {
+    public String extrairCrmToken(String token) {
         // Obtém o assunto (nome de usuário) das claims do token
         return extractClaims(token).getSubject();
     }
@@ -58,7 +58,7 @@ JwtUtil {
     // Valida o token JWT verificando o nome de usuário e se o token não está expirado
     public boolean validateToken(String token, String username) {
         // Extrai o nome de usuário do token
-        final String extractedUsername = extrairEmailToken(token);
+        final String extractedUsername = extrairCrmToken(token);
         // Verifica se o nome de usuário do token corresponde ao fornecido e se o token não está expirado
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
