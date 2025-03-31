@@ -12,7 +12,6 @@ public class MedicosConverter {
         return MedicosEntity.builder().
                 nome(medicoResponseDTO.getNome())
                 .email(medicoResponseDTO.getEmail())
-                .senha(medicoResponseDTO.getSenha())
                 .crm(medicoResponseDTO.getCrm())
                 .especialidade(medicoResponseDTO.getEspecialidade())
                 .build();
@@ -23,7 +22,6 @@ public class MedicosConverter {
 
         return MedicoResponseDTO.builder()
                 .nome(medicosDTO.getNome())
-                .senha(medicosDTO.getSenha())
                 .crm(medicosDTO.getCrm())
                 .especialidade(medicosDTO.getEspecialidade())
                 .build();
@@ -33,7 +31,6 @@ public class MedicosConverter {
         return MedicosEntity.builder()
                 .nome(usuarioDTO.getNome() != null ? usuarioDTO.getNome() : entity.getNome())
                 .id(entity.getId())
-                .senha(usuarioDTO.getSenha() != null ? usuarioDTO.getSenha() : entity.getSenha())
                 .email(usuarioDTO.getEmail() != null ? usuarioDTO.getEmail() : entity.getEmail())
                 .build();
     }
