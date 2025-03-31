@@ -28,9 +28,6 @@ public class MedicosEntity {
     @Column(name = "email", updatable = true)
     private String email;
     @JsonProperty(required = true)
-    @Column(name = "senha", updatable = true)
-    private String senha;
-    @JsonProperty(required = true)
     @Column(name = "crm", updatable = true, unique = true)
     private String crm;
 
