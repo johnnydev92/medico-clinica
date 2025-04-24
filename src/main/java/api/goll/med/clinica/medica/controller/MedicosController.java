@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,12 +39,22 @@ public class MedicosController {
     @ApiResponse(responseCode = "200", description = "Cadastro de medico encontrado com sucesso")
     @ApiResponse(responseCode = "404", description = "Cadastro não encontrado. Tente novamente.")
     @ApiResponse(responseCode = "406", description = "Erro de busca. Tente novamente.")
+    @ApiResponse(responseCode = "409", description = "CRM inválido ou nulo. Tente novamente.")
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
-    public ResponseEntity<MedicoResponseDTO> buscaMedicoPorCrm(@RequestParam("crm") String crm) {
+    public ResponseEntity<MedicoResponseDTO> gerarTokenEDadosMedico(@RequestParam("crm") String crm) {
+        if (crm.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
 
-        MedicoResponseDTO medicoResponseDTO = medicosService.buscaMedicoPorCrm(crm);
-        String token = "Bearer " + jwtUtil.generateToken(crm);
-        return ResponseEntity.ok(medicoResponseDTO);
+        MedicoResponseDTO medico = medicosService.buscaMedicoPorCrm(crm);
+        if (medico == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        String token = jwtUtil.generateToken(crm);
+        medico.setToken("Bearer " + token);
+
+        return ResponseEntity.ok(medico);
     }
 
     @DeleteMapping("/{crm}")
@@ -52,13 +63,13 @@ public class MedicosController {
     @ApiResponse(responseCode = "401", description = "Token inválido. Tente mais tarde.")
     @ApiResponse(responseCode = "403", description = "Medico não encontrado. Tente novamente")
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
-    public ResponseEntity<Void> deletaUsuarioPorCrm(@PathVariable String crm,
-                                                    @RequestHeader ("Authorization") String token) {
-        medicosService.deletaCadastroComToken(token);
+    public ResponseEntity<Void> deletaUsuarioPorToken(@PathVariable String crm,
+                                                      @RequestHeader ("Authorization") String token) {
+        medicosService.deletaCadastroComCrm(crm);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/medicos")
+    @PutMapping("/medicosupdate")
     @Operation(summary = "Atualiza dados de medico", description = "Atualiza dados de medico com token")
     @ApiResponse(responseCode = "200", description = "Dados atualizados com sucesso")
     @ApiResponse(responseCode = "401", description = "Token inválido. Tente mais tarde.")
@@ -66,7 +77,6 @@ public class MedicosController {
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
     public ResponseEntity<MedicoResponseDTO> atualizaDadosMedico(@RequestBody MedicoResponseDTO dto,
                                                          @RequestHeader("Authorization") String token) {
-
         return ResponseEntity.ok(medicosService.atualizaDadosMedico(token, dto));
 
     }

@@ -22,6 +22,7 @@ public class MedicosConverter {
 
         return MedicoResponseDTO.builder()
                 .nome(medicosDTO.getNome())
+                .email(medicosDTO.getEmail())
                 .crm(medicosDTO.getCrm())
                 .especialidade(medicosDTO.getEspecialidade())
                 .build();
