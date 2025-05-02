@@ -22,16 +22,19 @@ public class MedicosConverter {
 
         return MedicoResponseDTO.builder()
                 .nome(medicosDTO.getNome())
+                .email(medicosDTO.getEmail())
                 .crm(medicosDTO.getCrm())
                 .especialidade(medicosDTO.getEspecialidade())
                 .build();
     }
 
-    public MedicosEntity updateDadosMedico(MedicoResponseDTO usuarioDTO, MedicosEntity entity) {
+    public MedicosEntity updateDadosMedico(MedicoResponseDTO medicoResponseDTO, MedicosEntity entity) {
         return MedicosEntity.builder()
-                .nome(usuarioDTO.getNome() != null ? usuarioDTO.getNome() : entity.getNome())
+                .nome(medicoResponseDTO.getNome() != null ? medicoResponseDTO.getNome() : entity.getNome())
                 .id(entity.getId())
-                .email(usuarioDTO.getEmail() != null ? usuarioDTO.getEmail() : entity.getEmail())
+                .email(medicoResponseDTO.getEmail() != null ? medicoResponseDTO.getEmail() : entity.getEmail())
+                .crm(entity.getCrm())
+                .especialidade(medicoResponseDTO.getEspecialidade() != null ? medicoResponseDTO.getEspecialidade() : entity.getEspecialidade())
                 .build();
     }
 

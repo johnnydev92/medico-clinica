@@ -11,6 +11,9 @@ import api.goll.med.clinica.medica.infrastructure.repository.MedicosRepository;
 import api.goll.med.clinica.medica.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,29 +23,17 @@ public class MedicosService {
         private final MedicosConverter medicosConverter;
         private final JwtUtil jwtUtil;
 
-        public MedicoResponseDTO salvaMedico(MedicoResponseDTO medicoResponseDTO){
-
-            medicosRepository.existsByCrm(medicoResponseDTO.getCrm());
-            MedicosEntity medicos = medicosConverter.ParaMedicos(medicoResponseDTO);
-            return medicosConverter.paraMedicosDTO(medicosRepository.save(medicos));
-
+    public MedicoResponseDTO salvaMedico(MedicoResponseDTO medicoResponseDTO){
+        if (medicosRepository.existsByCrm(medicoResponseDTO.getCrm())) {
+            throw new ConflictException("CRM já cadastrado");
         }
 
-        public void deletaCadastroComToken(String token){
-            String crm = jwtUtil.extrairCrmToken(token.substring(7));
-            try {
-                boolean tokenValido = jwtUtil.validateToken(token, crm);
+        MedicosEntity medicos = medicosConverter.ParaMedicos(medicoResponseDTO);
+        MedicosEntity medicosSalvo = medicosRepository.save(medicos);
+        return medicosConverter.paraMedicosDTO(medicosSalvo);
+    }
 
-                if (!tokenValido){
-                    throw new UnathorizedException("Token inválido");
-                }
-            }catch (UnathorizedException e){
-                throw new UnathorizedException("Token inválido");
-            }
-
-            MedicosEntity medicos = medicosRepository.findByCrm(crm)
-                    .orElseThrow(() ->
-                            new ResourceNotFoundException("Médico não encontrado com o CRM: " + crm));
+        public void deletaCadastroComCrm(String crm){
 
             medicosRepository.deleteByCrm(crm);
         }

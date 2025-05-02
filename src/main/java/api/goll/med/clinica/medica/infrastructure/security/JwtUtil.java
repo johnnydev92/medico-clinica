@@ -24,9 +24,9 @@ JwtUtil {
         return Keys.hmacShaKeyFor(keyBytes);
     }
     // Gera um token JWT com o nome de usuário e validade de 1 hora
-    public String generateToken(String username) {
+    public String generateToken(String crm) {
         return Jwts.builder() // Inicia o processo de construção do token JWT
-                .subject(username) // Define o nome de usuário como o "subject" do token
+                .subject(crm) // Define o nome de usuário como o "subject" do token
                 .issuedAt(new Date()) // Define a data e hora atuais como o momento de emissão do token
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Define a data e hora de expiração do token para 1 hora a partir da emissão
                 .signWith(getSigningKey()) // Assina o token usando a chave de assinatura fornecida pelo método getSigningKey()
@@ -43,7 +43,7 @@ JwtUtil {
     }
 
 
-    // Extrai o email do usuário do token JWT
+    // Extrai o CRM do usuário do token JWT
     public String extrairCrmToken(String token) {
         // Obtém o assunto (nome de usuário) das claims do token
         return extractClaims(token).getSubject();
