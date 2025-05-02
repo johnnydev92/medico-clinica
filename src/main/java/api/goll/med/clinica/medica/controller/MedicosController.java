@@ -69,7 +69,7 @@ public class MedicosController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/medicosupdate")
+    @PutMapping("/update")
     @Operation(summary = "Atualiza dados de medico", description = "Atualiza dados de medico com token")
     @ApiResponse(responseCode = "200", description = "Dados atualizados com sucesso")
     @ApiResponse(responseCode = "401", description = "Token inválido. Tente mais tarde.")
