@@ -6,14 +6,10 @@ import api.goll.med.clinica.medica.business.dtos.MedicoResponseDTO;
 import api.goll.med.clinica.medica.infrastructure.entities.MedicosEntity;
 import api.goll.med.clinica.medica.infrastructure.exceptions.ConflictException;
 import api.goll.med.clinica.medica.infrastructure.exceptions.ResourceNotFoundException;
-import api.goll.med.clinica.medica.infrastructure.exceptions.UnathorizedException;
 import api.goll.med.clinica.medica.infrastructure.repository.MedicosRepository;
 import api.goll.med.clinica.medica.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +24,9 @@ public class MedicosService {
             throw new ConflictException("CRM já cadastrado");
         }
 
-        MedicosEntity medicos = medicosConverter.ParaMedicos(medicoResponseDTO);
+        MedicosEntity medicos = medicosConverter.paraMedicosEntity(medicoResponseDTO);
         MedicosEntity medicosSalvo = medicosRepository.save(medicos);
-        return medicosConverter.paraMedicosDTO(medicosSalvo);
+        return medicosConverter.paraMedicosResponseDTO(medicosSalvo);
     }
 
         public void deletaCadastroComCrm(String crm){
@@ -49,7 +45,7 @@ public class MedicosService {
 
                     }
                         catch (ConflictException e){
-                        throw new ConflictException("Crm já existe" + e.getCause());
+                        throw new ConflictException(e.getMessage());
 
                     }
 
@@ -59,14 +55,14 @@ public class MedicosService {
             return medicosRepository.existsByCrm(crm);
         }
 
-        public MedicoResponseDTO buscaMedicoPorCrm(String crm){
-            try {
-                return medicosConverter.paraMedicosDTO(medicosRepository.findByCrm(crm)
-                        .orElseThrow(() -> new ResourceNotFoundException("CRM não encontrado " + crm))
-                );
-            }catch (ResourceNotFoundException e){
-                throw new ResourceNotFoundException("Crm não encontrado " + crm);
-            }
+            public MedicoResponseDTO buscaMedicoPorCrm(String crm){
+                try {
+                    return medicosConverter.paraMedicosResponseDTO(medicosRepository.findByCrm(crm)
+                            .orElseThrow(() -> new ResourceNotFoundException("CRM não encontrado " + crm))
+                    );
+                }catch (ResourceNotFoundException e){
+                    throw new ResourceNotFoundException("Crm não encontrado " + crm);
+                }
         }
 
         public MedicoResponseDTO atualizaDadosMedico(String token, MedicoResponseDTO dto){
@@ -78,7 +74,7 @@ public class MedicosService {
 
             MedicosEntity medicosEntity = medicosConverter.updateDadosMedico(dto, medicos);
 
-            return medicosConverter.paraMedicosDTO(medicosRepository.save(medicosEntity));
+            return medicosConverter.paraMedicosResponseDTO(medicosRepository.save(medicosEntity));
 
         }
 

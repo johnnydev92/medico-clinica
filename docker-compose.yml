@@ -1,23 +1,43 @@
 
 services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/goll_med
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 1234
-    depends_on:
-      - db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: clinica
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    networks:
+      - clinica-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  db:
-    image: mysql:latest
-    container_name: mysql-container
+  clinica-app:
+    build: .
+    container_name: clinica-app
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
     environment:
-      MYSQL_DATABASE: goll_med
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 1234
-      MYSQL_ROOT_PASSWORD: 1234
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/clinica
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_FLYWAY_ENABLED: true
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
     ports:
-      - "3307:3306"
+      - "8089:8080"
+    networks:
+      - clinica-network
+
+networks:
+  clinica-network:
+    driver: bridge
