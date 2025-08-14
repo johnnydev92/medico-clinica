@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class MedicosConverter {
 
-    public MedicosEntity paraMedicosEntity(MedicoResponseDTO medicoResponseDTO){
+    public MedicosEntity paraMedicosEntity(MedicoRequestDTO medicoRequestDTO){
 
         return MedicosEntity.builder().
-                nome(medicoResponseDTO.getNome())
-                .email(medicoResponseDTO.getEmail())
-                .crm(medicoResponseDTO.getCrm())
-                .especialidade(medicoResponseDTO.getEspecialidade())
+                nome(medicoRequestDTO.getNome())
+                .email(medicoRequestDTO.getEmail())
+                .crm(medicoRequestDTO.getCrm())
+                .especialidade(medicoRequestDTO.getEspecialidade())
                 .build();
 
     }
@@ -29,13 +29,13 @@ public class MedicosConverter {
                 .build();
     }
 
-    public MedicosEntity updateDadosMedico(MedicoResponseDTO medicoResponseDTO, MedicosEntity entity) {
+    public MedicosEntity updateDadosMedico(MedicoRequestDTO medicoRequestDTO, MedicosEntity entity) {
         return MedicosEntity.builder()
-                .nome(medicoResponseDTO.getNome() != null ? medicoResponseDTO.getNome() : entity.getNome())
+                .nome(medicoRequestDTO.getNome() != null ? medicoRequestDTO.getNome() : entity.getNome())
                 .id(entity.getId())
-                .email(medicoResponseDTO.getEmail() != null ? medicoResponseDTO.getEmail() : entity.getEmail())
+                .email(medicoRequestDTO.getEmail() != null ? medicoRequestDTO.getEmail() : entity.getEmail())
                 .crm(entity.getCrm())
-                .especialidade(medicoResponseDTO.getEspecialidade() != null ? medicoResponseDTO.getEspecialidade() : entity.getEspecialidade())
+                .especialidade(medicoRequestDTO.getEspecialidade() != null ? medicoRequestDTO.getEspecialidade() : entity.getEspecialidade())
                 .build();
     }
 

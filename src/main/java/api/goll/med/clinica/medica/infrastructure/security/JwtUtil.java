@@ -55,11 +55,9 @@ JwtUtil {
         return extractClaims(token).getExpiration().before(new Date());
     }
 
-    // Valida o token JWT verificando o nome de usuário e se o token não está expirado
     public boolean validateToken(String token, String username) {
-        // Extrai o nome de usuário do token
-        final String extractedUsername = extrairCrmToken(token);
-        // Verifica se o nome de usuário do token corresponde ao fornecido e se o token não está expirado
+        final String extractedUsername = extrairCrmToken(token);  // extrai o CRM do token
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
+
 }
