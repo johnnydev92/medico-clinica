@@ -1,5 +1,6 @@
 package api.goll.med.clinica.medica.controller;
 
+import api.goll.med.clinica.medica.business.dtos.MedicoRequestDTO;
 import api.goll.med.clinica.medica.business.dtos.MedicoResponseDTO;
 import api.goll.med.clinica.medica.business.medicos.MedicosService;
 import api.goll.med.clinica.medica.infrastructure.security.JwtUtil;
@@ -28,8 +29,8 @@ public class MedicosController {
     @ApiResponse(responseCode = "201", description = "Medico salvo com sucesso")
     @ApiResponse(responseCode = "409", description = "Medico já cadastrado")
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
-    public ResponseEntity<MedicoResponseDTO> salvaMedicos(@RequestBody MedicoResponseDTO medicoResponseDTO) {
-        return ResponseEntity.ok(medicosService.salvaMedico(medicoResponseDTO));
+    public ResponseEntity<MedicoResponseDTO> salvaMedicos(@RequestBody MedicoRequestDTO medicoRequestDTO) {
+        return ResponseEntity.ok(medicosService.salvaMedico(medicoRequestDTO));
 
     }
 
@@ -59,14 +60,14 @@ public class MedicosController {
 
     @DeleteMapping("/{crm}")
     @Operation(summary = "Deleta medico cadastrado", description = "Deleta medico cadastrado com token")
-    @ApiResponse(responseCode = "200", description = "Medico deletado com sucesso")
+    @ApiResponse(responseCode = "202", description = "Medico deletado com sucesso")
     @ApiResponse(responseCode = "401", description = "Token inválido. Tente mais tarde.")
     @ApiResponse(responseCode = "403", description = "Medico não encontrado. Tente novamente")
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
     public ResponseEntity<Void> deletaUsuarioPorToken(@PathVariable String crm,
                                                       @RequestHeader ("Authorization") String token) {
-        medicosService.deletaCadastroComCrm(crm);
-        return ResponseEntity.ok().build();
+        medicosService.deletaCadastroComCrm(crm, token);
+        return ResponseEntity.accepted().build();
     }
 
     @PutMapping("/update")
@@ -75,7 +76,7 @@ public class MedicosController {
     @ApiResponse(responseCode = "401", description = "Token inválido. Tente mais tarde.")
     @ApiResponse(responseCode = "403", description = "Cadastro não encontrado. Tente novamente.")
     @ApiResponse(responseCode = "500", description = "Erro de servidor")
-    public ResponseEntity<MedicoResponseDTO> atualizaDadosMedico(@RequestBody MedicoResponseDTO dto,
+    public ResponseEntity<MedicoResponseDTO> atualizaDadosMedico(@RequestBody MedicoRequestDTO dto,
                                                          @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(medicosService.atualizaDadosMedico(token, dto));
 

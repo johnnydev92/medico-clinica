@@ -72,7 +72,7 @@ public class MedicoServiceTest {
         when(medicosRepository.
                 existsByCrm("00000000-0/BR")).thenReturn(false);
         when(medicosConverter.
-                paraMedicosEntity(medicoResponseDTO)).
+                paraMedicosEntity(medicoRequestDTO)).
                 thenReturn(medicosEntity);
         when(medicosRepository.save
                 (medicosEntity)).thenReturn(medicosEntity);
@@ -80,7 +80,7 @@ public class MedicoServiceTest {
                 .thenReturn(medicoResponseDTO);
 
         MedicoResponseDTO resultado =
-                medicosService.salvaMedico(medicoResponseDTO);
+                medicosService.salvaMedico(medicoRequestDTO);
 
         assertNotNull(resultado);
         assertEquals("00000000-0/BR", resultado.getCrm());
@@ -89,7 +89,7 @@ public class MedicoServiceTest {
         verify(medicosRepository).existsByCrm("00000000-0/BR");
         verify(medicosRepository).save(medicosEntity);
 
-        verify(medicosConverter).paraMedicosEntity(medicoResponseDTO);
+        verify(medicosConverter).paraMedicosEntity(medicoRequestDTO);
         verify(medicosConverter).paraMedicosResponseDTO(medicosEntity);
         verifyNoMoreInteractions(medicosRepository);
 
@@ -103,7 +103,7 @@ public class MedicoServiceTest {
         // Act & Assert
         ConflictException exception =
                 assertThrows(ConflictException.class, () -> {
-            medicosService.salvaMedico(medicoResponseDTO);
+            medicosService.salvaMedico(medicoRequestDTO);
         });
 
         assertEquals("CRM já cadastrado", exception.getMessage());
@@ -118,7 +118,7 @@ public class MedicoServiceTest {
         doNothing().when(medicosRepository).
                 deleteByCrm(medicoResponseDTO.getCrm());
 
-        medicosService.deletaCadastroComCrm(medicoResponseDTO.getCrm());
+        medicosService.deletaCadastroComCrm(medicoRequestDTO.getCrm(), medicoRequestDTO.getToken());
 
         verify(medicosRepository).deleteByCrm(medicoResponseDTO.getCrm());
 
@@ -194,7 +194,7 @@ public class MedicoServiceTest {
                 thenReturn(Optional.of(medicosEntity));
 
         when(medicosConverter.updateDadosMedico
-                (medicoResponseDTO, medicosEntity)).
+                (medicoRequestDTO, medicosEntity)).
                 thenReturn(medicosEntity);
 
         when(medicosRepository.save(medicosEntity))
@@ -204,7 +204,7 @@ public class MedicoServiceTest {
 
         MedicoResponseDTO resultado =
                 medicosService.atualizaDadosMedico
-                        (medicoResponseDTO.getToken(), medicoResponseDTO);
+                        (medicoResponseDTO.getToken(), medicoRequestDTO);
 
         assertEquals(medicoResponseDTO, resultado);
         verify(jwtUtil).extrairCrmToken
@@ -213,7 +213,7 @@ public class MedicoServiceTest {
         verify(medicosRepository)
                 .findByCrm(medicoResponseDTO.getCrm());
         verify(medicosConverter).
-                updateDadosMedico(medicoResponseDTO, medicosEntity);
+                updateDadosMedico(medicoRequestDTO, medicosEntity);
         verify(medicosRepository).save(medicosEntity);
         verify(medicosConverter).paraMedicosResponseDTO(medicosEntity);
         verifyNoMoreInteractions(medicosRepository, jwtUtil, medicosConverter);
@@ -230,7 +230,7 @@ public class MedicoServiceTest {
         when(medicosRepository.findByCrm(crm)).thenReturn(Optional.empty());
 
         ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
-            medicosService.atualizaDadosMedico(token, medicoResponseDTO);
+            medicosService.atualizaDadosMedico(token, medicoRequestDTO);
         });
 
         assertEquals("Médico não localizado.", exception.getMessage());
