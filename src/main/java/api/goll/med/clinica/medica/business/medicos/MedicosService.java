@@ -32,8 +32,13 @@ public class MedicosService {
     }
 
     public void deletaCadastroComCrm(String crm, String token) {
-        // Valida o token: extrai CRM do token e verifica se bate com o crm passado e se não está expirado
-        if (!jwtUtil.validateToken(token, crm)) {
+
+        String tokenLimpo = token.substring(7);
+
+        // Extrai o CRM do token
+        String crmExtraido = jwtUtil.extrairCrmToken(tokenLimpo);
+
+        if (!jwtUtil.validateToken(tokenLimpo, crm)) {
             throw new ConflictException("Token inválido. Tente mais tarde.");
         }
 
